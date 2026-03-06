@@ -131,9 +131,10 @@ check_all_zero() {
     local count=$2
     local offset=$((start_word * 4))
     local bytes=$((count * 4))
+    # Read raw bytes, check if any are non-zero using tr to strip null bytes
     local nonzero
     nonzero=$(dd if="$TMPFILE" bs=1 skip=$offset count=$bytes 2>/dev/null | \
-              od -A n -t x1 | tr -d ' \n' | sed 's/0//g')
+              tr -d '\000')
     [ -z "$nonzero" ] && echo 1 || echo 0
 }
 
